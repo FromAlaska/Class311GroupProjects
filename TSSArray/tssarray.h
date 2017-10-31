@@ -19,6 +19,10 @@ template<typename T>
 class TSSArray
 {
 //TSSARRAY TYPES
+
+/*
+ * Public variables
+ */
 public:
 	
 	using value_type = T;
@@ -26,29 +30,46 @@ public:
 	using iterator = value_type*;
 	using const_iterator = const value_type *;
 
+/*
+ * Private data members
+ */
+private:
 
+	size_type _capacity;
+	size_type _size;
+	value_type *_data;
+	static const int DEFAULT_CAP = 16;
+
+/*
+ * Public functions
+ */
+public:
 
 //BIG 5
 
 	//DEFAULT CTOR & CTOR FROM SIZE
-	explicit TSSArray(size_type size = size_type(0)) :_capacity(max(size, DEFAULT_CAP)), _size(size), _data(new value_type[_capacity])
-	{
-	}
+	explicit TSSArray(size_type size = size_type(0)) :_capacity(size), _size(size), _data(new value_type[_capacity])
+	{}
 
 	//COPY CTOR
-	TSSArray(const TSSArray & rhs)
-	{}
-	//MOVE CTOR
-	TSSArray(TSSArray && rhs) noexcept
-	{}
-	//DCTOR NO THROW
-	~TSSArray()
+	TSSArray(const TSSArray & rhs):_capacity(rhs._capacity),_size(rhs._size), _data(rhs._data)
 	{
+		std::copy(rhs.begin(), rhs.end(), begin());
+	}
+
+	//MOVE CTOR
+	TSSArray(const TSSArray && rhs):_capacity(rhs._capacity),_size(rhs._size), _data(rhs._data)
+	{
+		rhs._capacity = 0;
+		rhs._size = 0;
+		rhs._data = nullptr;
+	}
+	//DCTOR NO THROW
+	~TSSArray(){
 		delete[] _data;
 	}
 	//COPY ASSIGNMENT
-	TSSArray & operator=(const TSSArray & rhs)
-	{
+	TSSArray & operator=(const TSSArray & rhs){
 		return *this;
 	} 
 	//MOVE ASSIGNMENT NO THROW
@@ -132,12 +153,6 @@ public:
 
 	}
 
-private:
-
-	size_type _capacity;
-	size_type _size;
-	value_type *_data;
-	static const size_type DEFAULT_CAP = 16;
 
 };
 
