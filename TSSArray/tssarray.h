@@ -1,4 +1,4 @@
-#ifndef FILE_TSSARRAY_H_INCLUDED
+#ifndef FILE_TSSARRAY_H
 #define FILE_TSSARRAY_H
 
 #include <cstddef>
@@ -15,36 +15,24 @@ using std::max;
 
 
 
-template<typename Val>
+template<typename T>
 class TSSArray
 {
 //TSSARRAY TYPES
 public:
 	
-	using value_type = Val;
+	using value_type = T;
 	using size_type = size_t;
 	using iterator = value_type*;
 	using const_iterator = const value_type *;
 
-private:
-	static const size_type DEFAULT_CAP;
+
 
 //BIG 5
-public:
+
 	//DEFAULT CTOR & CTOR FROM SIZE
-	TSSARRAY()
+	explicit TSSArray(size_type size = size_type(0)) :_capacity(max(size, DEFAULT_CAP)), _size(size), _data(new value_type[_capacity])
 	{
-		DEFAULT_CAP = 16;
-		_size = 0;
-		_capacity = max(size, DEFAULT_CAP);
-		_data = new value_type[_capacity]
-	}
-	explicit TSSArray(size_type size)
-	{
-		DEFAULT_CAP = 16;
-		_capacity = max(size, DEFAULT_CAP);
-		_size = size;
-		_data = new value_type[_capacity];
 	}
 
 	//COPY CTOR
@@ -60,22 +48,30 @@ public:
 	}
 	//COPY ASSIGNMENT
 	TSSArray & operator=(const TSSArray & rhs)
-	{} 
+	{
+		return *this;
+	} 
 	//MOVE ASSIGNMENT NO THROW
 	TSSArray & operator=(TSSArray && rhs) noexcept
-	{}
+	{
+		return *this;
+	}
 
 //MEMBER OPERATOR FUNCTIONS
-public:
+
 	//OPERATOR[]
-	value_type & operator[](size_type index)
-	{}
+	value_type & operator[](size_type size)
+	{
+		return _data[size];
+	}
 	//CONST OPERATOR[]
-	value_type & operator[](size_type index) const
-	{}
+	value_type & operator[](size_type size) const
+	{
+		return _data[size];
+	}
 
 //GENERAL OPERATOR FUNCTIONS
-public:
+
 	size_type size() const
 	{
 		return _size;
@@ -102,22 +98,22 @@ public:
 		return i;
 	}
 
-	value_type* begin()
+	iterator begin()
 	{
 		return _data;
 	}
 
-	value_type* begin() const
+	iterator begin() const
 	{
 		return _data;
 	}
 
-	value_type* end()
+	iterator end()
 	{
 		return begin() + size();
 	}
 
-	value_type* end() const
+	iterator end() const
 	{
 		return begin() + size();
 	}
@@ -129,21 +125,22 @@ public:
 
 	void pop_back()
 	{
-		erase(end());
+		
 	}
 
 	void swap(const TSSArray & rhs) noexcept {
 
 	}
 
-
-
-//TSSARRAY DATA MEMBERS
 private:
+
 	size_type _capacity;
 	size_type _size;
 	value_type *_data;
+	static const size_type DEFAULT_CAP = 16;
 
 };
+
+
 
 #endif
