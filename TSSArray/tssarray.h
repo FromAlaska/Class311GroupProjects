@@ -137,7 +137,9 @@ public:
 	}
 
 	void swap(const TSSArray & rhs) noexcept {
-
+		std::swap(_capacity, rhs._capacity);
+		std::swap(_size, rhs._size);
+		std::swap(_data, rhs._data);
 	}
 
 
