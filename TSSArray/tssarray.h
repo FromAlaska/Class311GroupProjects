@@ -1,3 +1,9 @@
+// Jim Samson
+// Cameron Titus
+// Samuel Grenon
+// tssarray.h
+// This is to solve homework 5.
+
 #ifndef FILE_TSSARRAY_H
 #define FILE_TSSARRAY_H
 
@@ -38,19 +44,23 @@ public:
 	//COPY CTOR
 	TSSArray(const TSSArray & rhs)
 	{}
+
 	//MOVE CTOR
 	TSSArray(TSSArray && rhs) noexcept
 	{}
+	
 	//DCTOR NO THROW
 	~TSSArray()
 	{
 		delete[] _data;
 	}
+	
 	//COPY ASSIGNMENT
 	TSSArray & operator=(const TSSArray & rhs)
 	{
 		return *this;
 	} 
+	
 	//MOVE ASSIGNMENT NO THROW
 	TSSArray & operator=(TSSArray && rhs) noexcept
 	{
