@@ -2,7 +2,6 @@
 #define FILE_TSSARRAY_H
 
 #include <cstddef>
-using std::size_t;
 #include <algorithm>
 using std::max;
 
@@ -38,7 +37,7 @@ private:
 	size_type _capacity;
 	size_type _size;
 	value_type *_data;
-	static const int DEFAULT_CAP = 16;
+	//static const int DEFAULT_CAP = 16;
 
 /*
  * Public functions
@@ -57,7 +56,7 @@ public:
 	}
 
 	//MOVE CTOR
-	TSSArray(const TSSArray && rhs) noexcept :_capacity(rhs._capacity),_size(rhs._size), _data(rhs._data) {
+	TSSArray(TSSArray && rhs) noexcept :_capacity(rhs._capacity),_size(rhs._size), _data(rhs._data) {
 		rhs._capacity = 0;
 		rhs._size = 0;
 		rhs._data = nullptr;
@@ -70,11 +69,15 @@ public:
 
 	//COPY ASSIGNMENT
 	TSSArray & operator=(const TSSArray & rhs){
+		_capacity = rhs._capacity;
+		_size = rhs._size;
+		_data = rhs._data;
 		return *this;
 	} 
 
 	//MOVE ASSIGNMENT NO THROW
 	TSSArray & operator=(TSSArray && rhs) noexcept {
+		swap(rhs);
 		return *this;
 	}
 
@@ -101,7 +104,20 @@ public:
 	}
 
 	void resize(size_type size) {
-		//TODO DUMMY
+
+		if (_capacity >= size) {
+
+			_size = size;
+		}
+		else {
+			TSSArray<T> newarray(2 * size);
+			for (std::size_t i = 0; i < size; i++)
+			{
+				newarray[i] = _data[i];
+			}
+			newarray._size = size;
+			swap(newarray);
+		}
 	}
 
 	iterator insert(iterator i, const value_type & v) {
@@ -130,16 +146,26 @@ public:
 
 	void push_back(const value_type & v) {
 
+		//_size += 1;
+		///*if (_capacity > _size) {
+		//_data[_size] = v;
+		//}
+		//else {
+		//resize(_size);
+		//}*/
+		//resize(_size);
+		//_data[_size] = v;
+
 	}
 
 	void pop_back() {
 		
 	}
 
-	void swap(const TSSArray & rhs) noexcept {
-		std::swap(_capacity, rhs._capacity);
-		std::swap(_size, rhs._size);
-		std::swap(_data, rhs._data);
+	void swap(TSSArray<T> & rhs) noexcept {
+		/*std::swap(rhs._capacity, _capacity);
+		std::swap(rhs._size, _size);
+		std::swap(rhs._data, _data);*/
 	}
 
 
