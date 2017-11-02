@@ -147,29 +147,21 @@ public:
 
 	iterator insert(iterator i, const value_type & v) {
 		
-		auto index = i - begin();
-
+		size_type index = i - begin();
+		resize(_size+1);
 		
-		if (_capacity < _size+1)
-		{
-			resize(_size+1);
+        
+		for (size_type ii = _size -1; ii > index; ii--){
+			_data[ii] = _data[ii-1];
 		}
 		
-
-		for (size_type ii = index; ii != _size-1; ii++)
-		{
-			std::swap(_data[ii], _data[ii+1]);
-		}
-		
-		if (i == end())
-		{
+		if (i == end()){
 			_data[_size-1] = v;
 		}
 		else
 			_data[index] = v;
-
-		_size++;
-		return i;
+        
+		return begin() + index;
 		
 	}
 
