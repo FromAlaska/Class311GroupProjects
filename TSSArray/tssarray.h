@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <algorithm>
+#include <iostream>
 using std::max;
 
 
@@ -37,7 +38,7 @@ private:
 	size_type _capacity;
 	size_type _size;
 	value_type *_data;
-	//static const int DEFAULT_CAP = 16;
+	//static const size_type DEFAULT_CAP = 16;
 
 /*
  * Public functions
@@ -47,12 +48,25 @@ public:
 //BIG 5
 
 	//DEFAULT CTOR & CTOR FROM SIZE
-	explicit TSSArray(size_type size = size_type(0)) :_capacity(size), _size(size), _data(new value_type[_capacity])
+	explicit TSSArray(size_type size = size_type(0))
+		:_capacity(std::max(size, size_type(16))),
+		// _capacity must be declared before _data
+		_size(size),
+		_data(new value_type[_capacity])
 	{}
+	
+
 
 	//COPY CTOR
-	TSSArray(const TSSArray & rhs):_capacity(rhs._capacity),_size(rhs._size), _data(rhs._data) {
-		std::copy(rhs.begin(), rhs.end(), begin());
+	TSSArray(const TSSArray & rhs) :_capacity(rhs._capacity), _size(rhs._size), _data(new value_type[_capacity]) {
+
+		try {
+			std::copy(rhs.begin(), rhs.end(), begin());
+		}
+		catch (...) {
+			delete[] _data;
+			throw;
+		}
 	}
 
 	//MOVE CTOR
@@ -65,13 +79,13 @@ public:
 	//DCTOR NO THROW
 	~TSSArray() {
 		delete[] _data;
+		//delete iterator;
 	}
 
 	//COPY ASSIGNMENT
 	TSSArray & operator=(const TSSArray & rhs){
-		_capacity = rhs._capacity;
-		_size = rhs._size;
-		_data = rhs._data;
+		TSSArray temp(rhs);
+		swap(temp);
 		return *this;
 	} 
 
@@ -84,12 +98,12 @@ public:
 //MEMBER OPERATOR FUNCTIONS
 
 	//OPERATOR[]
-	value_type & operator[](size_type size) {
-		return _data[size];
+	value_type & operator[](size_type index) {
+		return _data[index];
 	}
 	//CONST OPERATOR[]
-	value_type & operator[](size_type size) const {
-		return _data[size];
+	value_type & operator[](size_type index) const {
+		return _data[index];
 	}
 
 //GENERAL OPERATOR FUNCTIONS
@@ -110,21 +124,67 @@ public:
 			_size = size;
 		}
 		else {
-			TSSArray<T> newarray(2 * size);
-			for (std::size_t i = 0; i < size; i++)
-			{
-				newarray[i] = _data[i];
+			
+			size_type newCapacity;
+			iterator newData;
+			newCapacity = size * 2;
+			newData = new value_type[newCapacity];
+			try {
+				std::copy(begin(), end(), newData);
 			}
-			newarray._size = size;
-			swap(newarray);
+			catch (...)
+			{
+				delete[] newData;
+				throw;
+			}
+			delete[] _data;
+			_data = newData;
+			_capacity = newCapacity;
+			_size = size;	
 		}
 	}
+	
 
 	iterator insert(iterator i, const value_type & v) {
+		
+		auto index = i - begin();
+
+		
+		if (_capacity < _size+1)
+		{
+			resize(_size+1);
+		}
+		
+
+		for (size_type ii = index; ii != _size-1; ii++)
+		{
+			std::swap(_data[ii], _data[ii+1]);
+		}
+		
+		if (i == end())
+		{
+			_data[_size-1] = v;
+		}
+		else
+			_data[index] = v;
+
+		_size++;
 		return i;
+		
 	}
 
 	iterator erase(iterator i) {
+		auto index = i - begin();
+		if (i == end())
+		{
+			return end();
+		}
+
+		for (size_type ii = index; ii != _size - 1; ii++)
+		{
+			std::swap(_data[ii], _data[ii + 1]);
+		}
+		_size--;
 		return i;
 	}
 
@@ -132,7 +192,7 @@ public:
 		return _data;
 	}
 
-	iterator begin() const {
+	const_iterator begin() const {
 		return _data;
 	}
 
@@ -140,32 +200,29 @@ public:
 		return begin() + size();
 	}
 
-	iterator end() const {
+	const_iterator end() const {
 		return begin() + size();
 	}
 
 	void push_back(const value_type & v) {
 
-		//_size += 1;
-		///*if (_capacity > _size) {
-		//_data[_size] = v;
-		//}
-		//else {
-		//resize(_size);
-		//}*/
-		//resize(_size);
-		//_data[_size] = v;
-
+		_size++;
+		if (_capacity <= _size) {
+			resize(_size);
+		}
+		_data[_size-1] = v;
+	
 	}
 
 	void pop_back() {
-		
+
+		_size--;
 	}
 
 	void swap(TSSArray<T> & rhs) noexcept {
-		/*std::swap(rhs._capacity, _capacity);
-		std::swap(rhs._size, _size);
-		std::swap(rhs._data, _data);*/
+		std::swap(_capacity, rhs._capacity);
+		std::swap(_size, rhs._size);
+		std::swap(_data, rhs._data);
 	}
 
 
