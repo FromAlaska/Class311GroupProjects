@@ -1,3 +1,9 @@
+// Jim Samson
+// Cameron Titus
+// Samuel Grenon
+// November 09, 2017
+//
+// This is for Assignment 6
 #ifndef da6_h
 #define da6_h
 #include "llnode2.h"
@@ -27,34 +33,61 @@ template<typename KeyType, typename ValType>
 class LLMap {
 private:
 	using KVTYPE = std::pair<KeyType, ValType>;
-	using _dummy = shared_ptr<LLNode2<KVTYPE>>;
+	shared_ptr<LLNode2<KVTYPE>> _list;
 
 public:
 
-	LLMap()  //_dummy(nullptr)
+	LLMap(): _list(nullptr)
 	{}
 
 	int size() {
-		return 1; // TODO
+	  auto p = _list;
+	  size_t n = 0;
+	  while(p)
+	  {
+	    p = p->_next;
+	    ++n;
+	  }
+	 return n; 
 	}
+
 	int size() const {
-		return 1; // TODO
+	  auto p = _list;
+	  size_t n = 0;
+	  while(p)
+	  {
+	   p = p->_next;
+	   ++n;
+	  }
+	 return n;
 	}
 
 	bool empty() {
-		return true; // TODO
-	}
-	bool empty() const {
-		return true;
-	}
-	
-	ValType* find(const KeyType & key) {
-		return nullptr;
-		// TODO
+		return _list == nullptr;
 	}
 
-	const ValType* find(const KeyType & list) const {
-		return nullptr;
+	bool empty() const {
+		return _list == nullptr;
+	}
+
+	ValType* find(const KeyType & key) {
+	 shared_ptr<LLNode2<KVTYPE>> currPos;
+	 for(currPos = _list; currPos; currPos = currPos->_next) {
+	  if(currPos->_data.first == key) {
+	   return &(currPos->_data.second);
+	  }
+	 }
+	 return nullptr;
+	}
+
+	const ValType* find(const KeyType & key) const {
+	 shared_ptr<LLNode2<KVTYPE>> currPos;
+	 for(currPos = _list; currPos; currPos = currPos->_next) {
+	  if(currPos->_data.first == key) {
+	    return &(currPos->_data.second);
+	  }
+	 }
+	 return nullptr;
 	}
 
 	void insert(const KeyType & key, const ValType & val) {
@@ -68,7 +101,7 @@ public:
 	void traverse(std::function<void(KeyType, ValType)> function) {
 
 	}
-	
+
 public:
 	// BIG FIVE
 	~LLMap() = default;
