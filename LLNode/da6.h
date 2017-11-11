@@ -4,11 +4,10 @@
 #include <cstddef>
 #include <iostream>
 #include <functional>
-using std::size_t;
+//using std::size_t;
 
 template<typename ValType>
 void reverseList(shared_ptr<LLNode2<ValType> > & head) {
-	//make_shared<ValType> next;
 	//make_shared<ValType> prev;
 	//auto current = head;
 
@@ -27,17 +26,14 @@ template<typename KeyType, typename ValType>
 class LLMap {
 private:
 	using KVTYPE = std::pair<KeyType, ValType>;
-	using _dummy = shared_ptr<LLNode2<KVTYPE>>;
+	shared_ptr<LLNode2<KVTYPE>> _head;
 
 public:
 
-	LLMap()  //_dummy(nullptr)
+	explicit LLMap() 
 	{}
 
-	int size() {
-		return 1; // TODO
-	}
-	int size() const {
+	size_t size() const {
 		return 1; // TODO
 	}
 
@@ -58,10 +54,37 @@ public:
 	}
 
 	void insert(const KeyType & key, const ValType & val) {
-
+		
+		shared_ptr<LLNode2<KVTYPE>> insert;
+		KVTYPE _inserted = std::make_pair(key, val);
+		insert->_data = _inserted;
+		insert->_next = _head;
+		_head = insert;
+		
 	}
 
 	void erase(const KeyType & key) {
+		shared_ptr<LLNode2<KVTYPE>> temp = _head;
+		shared_ptr<LLNode2<KVTYPE>> oldTemp = _head;
+
+		// if the list only contains one node and its the key
+		if (_head->_data.first == key)
+		{
+			head = nullptr;
+		}
+
+		// see if the item is in the linked list
+		while (temp->_next!= nullptr)
+		{
+			oldTemp = temp;
+			temp = temp->_next;
+			if (temp->_data.first == key)
+			{
+				oldTemp->_next = temp->_next;
+				temp->_next = nullptr;
+			}
+
+		}
 
 	}
 
