@@ -13,20 +13,21 @@
 using std::size_t;
 
 template<typename ValType>
-void reverseList(shared_ptr<LLNode2<ValType> > & head) {
-	//make_shared<ValType> next;
-	//make_shared<ValType> prev;
-	//auto current = head;
+void reverseList(shared_ptr<LLNode2<ValType>> & head) {
+	//print_list(head);
+	if (head != nullptr) {
+		shared_ptr<LLNode2<ValType> > current = head, next, prev = nullptr;
 
-	//while (current != null) {
-	//	next = current->_next;
-	//	current->next = prev;
-	//	prev = current;
-	//	current = next;
+		while (current!=nullptr)
+		{
+			next = current->_next;
+			current->_next = prev;
+			prev = current;
+			current = next;
+		}
 
-
-	//}
-	//head = prev
+		head = prev;
+	}
 }
 
 template<typename KeyType, typename ValType>
@@ -37,64 +38,76 @@ private:
 
 public:
 
-	LLMap(): _list(nullptr)
-	{}
+	LLMap():_list(nullptr){
 
-	int size() {
-	  auto p = _list;
-	  size_t n = 0;
-	  while(p)
-	  {
-	    p = p->_next;
-	    ++n;
-	  }
-	 return n; 
 	}
 
 	int size() const {
-	  auto p = _list;
-	  size_t n = 0;
-	  while(p)
-	  {
-	   p = p->_next;
-	   ++n;
-	  }
-	 return n;
+		size_t n = 0;
+		while (_list->_next != nullptr) {
+			n++;
+		}
+		return n;
 	}
 
 	bool empty() {
-		return _list == nullptr;
+		return size() < 1;
 	}
 
 	bool empty() const {
-		return _list == nullptr;
+		return size() < 1;
 	}
 
 	ValType* find(const KeyType & key) {
-	 shared_ptr<LLNode2<KVTYPE>> currPos;
-	 for(currPos = _list; currPos; currPos = currPos->_next) {
-	  if(currPos->_data.first == key) {
-	   return &(currPos->_data.second);
-	  }
-	 }
-	 return nullptr;
+		shared_ptr<LLNode2<KVTYPE>> currPos;
+		for(currPos = _list; currPos; currPos = currPos->_next) {
+	  		if(currPos->_data.first == key)
+				return &(currPos->_data.second);
+	 	}
+		return nullptr;
 	}
 
 	const ValType* find(const KeyType & key) const {
-	 shared_ptr<LLNode2<KVTYPE>> currPos;
-	 for(currPos = _list; currPos; currPos = currPos->_next) {
-	  if(currPos->_data.first == key) {
-	    return &(currPos->_data.second);
-	  }
-	 }
-	 return nullptr;
+		shared_ptr<LLNode2<KVTYPE>> currPos;
+		for(currPos = _list; currPos; currPos = currPos->_next) {
+	  		if(currPos->_data.first == key)
+	    		return &(currPos->_data.second);
+	 	}
+		return nullptr;
 	}
 
 	void insert(const KeyType & key, const ValType & val) {
 
+		// shared_ptr<LLNode2<KVTYPE>> insert;
+		// KVTYPE _inserted = std::make_pair(key, val);
+		// insert->_data = _inserted;
+		// insert->_next = _head;
+		// _head = insert;
+
 	}
 
 	void erase(const KeyType & key) {
+		// shared_ptr<LLNode2<KVTYPE>> temp = _head;
+		// shared_ptr<LLNode2<KVTYPE>> oldTemp = _head;
+        //
+		// // if the list only contains one node and its the key
+		// if (_head->_data.first == key)
+		// {
+		// 	head = nullptr;
+		// }
+        //
+		// // see if the item is in the linked list
+		// while (temp->_next!= nullptr)
+		// {
+		// 	oldTemp = temp;
+		// 	temp = temp->_next;
+		// 	if (temp->_data.first == key)
+		// 	{
+		// 		oldTemp->_next = temp->_next;
+		// 		temp->_next = nullptr;
+		// 	}
+        //
+		// }
 
 	}
 

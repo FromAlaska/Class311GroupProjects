@@ -1,6 +1,8 @@
 // da6_test_suites.cpp
+// VERSION 2
 // Glenn G. Chappell
 // 5 Nov 2017
+// Updated: 10 Nov 2017
 //
 // For CS 311 Fall 2017
 // Test program for Assignment 6 Templates
@@ -716,6 +718,10 @@ TEST_CASE( "LLMap: insert, erase, find",
         INFO( "find #2 returns ptr to inserted value after single insert" );
         REQUIRE( *(m.find(11)) == 72 );
         }
+
+        // Recursive dctor may have problems with large list
+        for (int i = 1; i < SIZE*2; i += 2)
+            m.erase(i);
     }
 }
 
