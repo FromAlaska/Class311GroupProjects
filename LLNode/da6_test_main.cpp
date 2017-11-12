@@ -1,8 +1,8 @@
 // da6_test_main.cpp
-// VERSION 2
+// VERSION 3
 // Glenn G. Chappell
 // 5 Nov 2017
-// Updated: 10 Nov 2017
+// Updated: 11 Nov 2017
 //
 // For CS 311 Fall 2017
 // Test program for Assignment 6 Templates

@@ -5,51 +5,43 @@
 //
 // This is for Assignment 6
 
+
 #ifndef da6_h
 #define da6_h
 #include "llnode2.h"
 #include <cstddef>
 #include <iostream>
-using std::cout;
-using std::endl;
 #include <functional>
-#include <utility>
-//using std::size_t;
 
-// reverseList() function
-// This reverses a list
-// Pre:
-//		TODO!!
+
 template<typename ValType>
-void reverseList(shared_ptr<LLNode2<ValType>> & head) {
-	//print_list(head);
-	if (head != nullptr) {
+void reverseList(shared_ptr<LLNode2<ValType> > & head) {
+	shared_ptr<LLNode2<ValType>> _prev;
+	shared_ptr<LLNode2<ValType>> _current;
+	shared_ptr<LLNode2<ValType>> _next;
+	_current = head;
 
-		shared_ptr<LLNode2<ValType>> current = head;
-		shared_ptr<LLNode2<ValType>> next;
-		shared_ptr<LLNode2<ValType>> prev = nullptr;
-
-		while (current != nullptr) {
-
-			next = current->_next;
-			current->_next = prev;
-			prev = current;
-			current = next;
-		}
-		head = prev;
+	while (_current != nullptr) {
+		_next = _current->_next;
+		_current->_next = _prev;
+		_prev = _current;
+		_current = _next;
 	}
-	return;
+	head = _prev;
 }
 
+//******************************************
+// Template class LLMap
+//******************************************
 
-////////////////////////////////////////
-// Class LLMap                        //
-////////////////////////////////////////
-
-// Class LLMap
-// 
-// Invariants:
-//		TODO
+//class LLMap
+//LLMap holds shared_ptrs of KVTYPE which is client-specified pairs.
+//Invariants:
+//			_list = nullptr for an empty list. _list->_next either points to another _list
+//			or points to a end of _list nullptr. 
+//
+//Requirements on Types:
+//			LLMAP dctor must not throw
 
 template<typename KeyType, typename ValType>
 class LLMap {
@@ -57,117 +49,140 @@ private:
 	using KVTYPE = std::pair<KeyType, ValType>;
 	shared_ptr<LLNode2<KVTYPE>> _list;
 
+	
 public:
 
-	// LLMap() Constructor
-	// 
-	// Pre:
-	//		None.
-	LLMap():_list(nullptr)
-	{}
+	//Pre: None
+	//Exception Nuetral
+	//No throw Guarantee
+	explicit LLMap() :_list(nullptr) {
 
-	// Size() function
-	// fdas
-	// Pre:
-	//		None.
-	size_t size() {
-		auto temp = _list;
-		if(temp == nullptr) return 0;
-
-		size_t count = 0;
-		while (temp != nullptr) {
-			count++;
-			temp = temp->_next;
-		}
-		return count;
 	}
+
+	//size(const)
+	//Pre - None
+	//Exception Neutral
+	//No-Throw Guarantee
 
 	size_t size() const {
-		auto temp = _list;
+		shared_ptr<LLNode2<KVTYPE>> _current = _list;
+		size_t n = 0;
+		while (_current != nullptr) {
+			n++;
+			_current = _current->_next;
 
-		if(temp == nullptr) return 0;
-
-		size_t count = 0;
-		while (temp != nullptr) {
-			count++;
-			temp = temp->_next;
 		}
-		return count;
+		return n;
 	}
 
+	//empty(non const version)
+	//Pre: None
+	//Exception Neutral
+	//No-Throw Guarantee
 	bool empty() {
-		return _list == nullptr;
+		return !(_list);
 	}
 
+	//empty(const version)
+	//Pre: None
+	//Exception Neutral
+	//No-Throw Guarantee
 	bool empty() const {
-		return _list == nullptr;
+		return !(_list);
 	}
+
+	//Find(non const version)
+	//Pre: None
+	//Exception Neutral
+	//Strong Gurantee
+	//Will Throw if KeyType throws.
 
 	ValType* find(const KeyType & key) {
-		auto currPos = _list;
+		shared_ptr<LLNode2<KVTYPE>> _current;
+		_current = _list;
+		while (_current) {
 
-		while(currPos) {
-			if(currPos->_data.first == key) {
-				return &(currPos->_data.second);
+			if (_current->_data.first == key) {
+				return &(_current->_data.second);
 			}
-			currPos = currPos->_next;
+			_current = _current->_next;
 		}
-		
 		return nullptr;
 	}
 
+	//Find(const version)
+	//Pre: None
+	//Exception Neutral
+	//Strong Guarantee
+	//Will Throw when a KeyType operation throws
 	const ValType* find(const KeyType & key) const {
-		auto currPos = _list;
+		shared_ptr<LLNode2<KVTYPE>> _current;
+		_current = _list;
+		while (_current) {
 
-		while(currPos) {
-			if(currPos->_data.first == key) {
-				return &(currPos->_data.second);
+			if (_current->_data.first == key) {
+				return &(_current->_data.second);
 			}
-			currPos = currPos->_next;
+			_current = _current->_next;
 		}
-		
 		return nullptr;
 	}
 
+	//insert Credit goes to Duane Shaffer and his group
+	//for this function. The use find() and the creation of 
+	//ValType* place helped create a workable insert function.
+	//Pre: None
+	//Exception Neutral
+	//Strong Guarantee
+	//Can Throw if Find(key) Throws.
 	void insert(const KeyType & key, const ValType & val) {
-
-		if(!_list) {
-			_list = make_shared<LLNode2<std::pair<KeyType,ValType>>>(std::make_pair(key,val));
+		ValType* place = find(key);
+		if (place) {
+			*place = val;
 		}
 		else {
-			_list->_next = make_shared<LLNode2<std::pair<KeyType,ValType>>>(std::make_pair(key,val));
+			_list = make_shared<LLNode2<KVTYPE>>(std::make_pair(key, val), _list);
 		}
 	}
 
+	//erase
+	//Pre: None
+	//Strong Guarantee
+	//Throws when KeyType throws
+	//Exception Neutral
 	void erase(const KeyType & key) {
-		auto temp = _list;
-		if(temp->_data.first == key) {
+
+		if (_list->_data.first == key) {
 			_list = _list->_next;
-			return;
 		}
-		while(temp->_next) {
-			if(temp->_next->_data.first == key) {
-				temp->_next = temp->_next->_next;
-				return;
+		else {
+			auto _current = _list;
+			auto _prev = _list;
+			while (_current != nullptr && _current->_data.first != key) {
+				_prev = _current;
+				_current = _current->_next;
 			}
-			temp = temp->_next;
+			_prev->_next = _current->_next; 
 		}
 	}
 
+	//Pre: none
+	//Basic Guarantee
+	//Exception Nuetral
 	void traverse(std::function<void(KeyType, ValType)> function) {
-		shared_ptr<LLNode2<std::pair<KeyType,ValType>>> currPos = _list;
-		while(currPos) {
-			function(currPos->_data.first,currPos->_data.second);
-			currPos = currPos->_next;
+		auto _current = _list;
+		while (_current!=nullptr) {
+			function(_current->_data.first, _current->_data.second);
+			_current = _current->_next;
 		}
 	}
-
+		
 public:
 	// BIG FIVE
 	~LLMap() = default;
-	LLMap(const LLMap & rhs) = delete;
-	LLMap(LLMap && rhs) = delete;
-	LLMap operator=(const LLMap & rhs) = delete;
-	LLMap operator=(LLMap && rhs) = delete;
+	LLMap(const LLMap&) = delete;
+	LLMap(LLMap&&) = delete;
+	LLMap & operator=(const LLMap) = delete;
+	LLMap & operator=(LLMap &&) = delete;
 };
 #endif

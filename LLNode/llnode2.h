@@ -74,7 +74,7 @@ struct LLNode2 {
 template <typename ValType>
 size_t size(shared_ptr<LLNode2<ValType> > head)
 {
-    auto p = head;  // Iterates through list
+	auto p = head;  // Iterates through list
     size_t n = 0;   // Number of nodes so far
     while (p)
     {

@@ -1,8 +1,8 @@
 // da6_test_suites.cpp
-// VERSION 2
+// VERSION 3
 // Glenn G. Chappell
 // 5 Nov 2017
-// Updated: 10 Nov 2017
+// Updated: 11 Nov 2017
 //
 // For CS 311 Fall 2017
 // Test program for Assignment 6 Templates
@@ -826,6 +826,10 @@ TEST_CASE( "LLMap: traverse",
         );
         sort(data.begin(), data.end());
         REQUIRE( data == expected );
+
+        // Recursive dctor may have problems with large list
+        for (const auto & p : data)
+            m.erase(p.first);
     }
 }
 
