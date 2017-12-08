@@ -20,62 +20,56 @@ using std::vector;
 using std::distance;
 #include <memory>
 using std::shared_ptr;
-
-
-
-
+using std::make_shared;
 
 template<typename Ndata>
 struct BST {
 	Ndata _data;
-	shared_ptr<Ndata> left;
-	shared_ptr<Ndata> right;
-	BST(Ndata item, shared_ptr<Ndata>_left, shared_ptr<Ndata> _right);
-		
-	
+	shared_ptr<BST<Ndata>> _left;
+	shared_ptr<BST<Ndata>> _right;
+	BST(Ndata& item):_data(item), _left(nullptr),_right(nullptr){}
+
 	~BST(){}
-
-
-	void insert(shared_ptr<BST<Ndata>> &, Ndata);
-	void traverse(shared_ptr<BST<Ndata> > head, Ndata & it);
-
-
 };
 
 template<typename Ndata>
-void BST<Ndata>::insert(shared_ptr<BST<Ndata> > & head, Ndata key) {
-
-	if (head == NULL) {
-		head->_data = key;
+void insert(shared_ptr<BST<Ndata>> & head, Ndata & key)
+{
+	if (!head)
+	{
+		head = make_shared<BST<Ndata>>(key);
 	}
 
-	if (key < head->_data) {
-		p->left = insert(p->left, key);
+	if(key < head->_data)
+	{
+		if(head->_left)
+		{
+			insert(head->_left,key);
+		}
+		else
+		{
+			head->_left = make_shared<BST<Ndata>>(key);
+			return;
+		}
 	}
 
-	else if (key > head->_data) {
-		head->right = insert(head->right, key);
+	else
+	{
+		if(head->_right)
+		{
+			insert(head->_right,key);
+		}
+		else
+		{
+			head->_right = make_shared<BST<Ndata>>(key);
+			return;
+		}
 	}
 }
 
 template<typename Ndata>
-void BST<Ndata>::traverse(shared_ptr<BST<Ndata> > head, Ndata & it) {
-
-	if (p = NULL) {
-		return;
-	}
-	if (head->left != NULL) {
-		traverse(head->left, it)
-	}
-
-	*it++ = head->_data;
-
-	if (left->right != NULL) {
-		traverse(head->right, it)
-	}
+void traverse(shared_ptr<BST<Ndata>> head, Ndata & it) {
 }
-
-	
 
 // treesort
 // Sort a given range using Treesort.
@@ -88,20 +82,25 @@ void BST<Ndata>::traverse(shared_ptr<BST<Ndata> > head, Ndata & it) {
 template<typename FDIter>
 void treesort(FDIter first, FDIter last)
 {
-    // Get the type that FDIter points to
-    using Value = typename remove_reference<decltype(*first)>::type;
-	
+	if(first == last) return;
+	// Get the type that FDIter points to
+	using Value = typename remove_reference<decltype(*first)>::type;
+	shared_ptr<BST<FDIter>> head;
 
-    // THE FOLLOWING IS DUMMY CODE. IT WILL PASS ALL TESTS. BUT IT DOES
-    // NOT MEET THE REQUIREMENTS OF THE ASSIGNMENT.
-   /* vector<Value> buff(distance(first, last));
-    copy(first, last, buff.begin());
-    stable_sort(buff.begin(), buff.end());
-    copy(buff.begin(), buff.end(), first);*/
+	FDIter temp = first;
 
+	for(FDIter iter = first; iter != last; ++iter)
+	{
+		insert(head,temp);
+	}
+
+  // THE FOLLOWING IS DUMMY CODE. IT WILL PASS ALL TESTS. BUT IT DOES
+  // NOT MEET THE REQUIREMENTS OF THE ASSIGNMENT.
+ /* vector<Value> buff(distance(first, last));
+  copy(first, last, buff.begin());
+  stable_sort(buff.begin(), buff.end());
+  copy(buff.begin(), buff.end(), first);*/
 
 }
 
-
 #endif //#ifndef FILE_TREESORT_H_INCLUDED
-
